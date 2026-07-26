@@ -1,6 +1,6 @@
 import type { ViteDevServer } from "vite";
 import { registry } from "./registry";
-import { exec } from "node:child_process";
+import { editor } from "./editors";
 import type { IncomingMessage, ServerResponse } from "node:http";
 
 export function installServer(server: ViteDevServer) {
@@ -26,11 +26,15 @@ export function installServer(server: ViteDevServer) {
 				body += chunk;
 			});
 
-			req.on("end", () => {
+			req.on("end", async () => {
 				try {
 					const { file, line, column } = JSON.parse(body);
 
-					exec(`code -g "${file}:${line}:${column}"`);
+					await editor.open({
+						file,
+						line,
+						column,
+					});
 
 					res.setHeader("Content-Type", "application/json");
 					res.end(JSON.stringify({ success: true }));
