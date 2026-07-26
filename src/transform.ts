@@ -1,6 +1,12 @@
 import type { ResolvedConfig } from "vite";
 import { parse } from "@babel/parser";
 import { analyzeAst } from "./analyzer";
+import * as generatorModule from "@babel/generator";
+
+const generate =
+	(generatorModule as any).default?.default ??
+	(generatorModule as any).default ??
+	generatorModule;
 
 export function transformReactFile(
 	code: string,
@@ -28,8 +34,15 @@ export function transformReactFile(
 	console.table(metadata.declarations);
 	console.table(metadata.usages);
 
+	const output = generate(ast, {
+		sourceMaps: true,
+		sourceFileName: id,
+	});
+
+	console.log(output.code);
+
 	return {
-		code,
-		map: null,
+		code: output.code,
+		map: output.map,
 	};
 }

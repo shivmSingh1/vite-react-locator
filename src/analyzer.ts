@@ -3,6 +3,8 @@ import type { NodePath } from "@babel/traverse";
 import * as t from "@babel/types";
 import type { FileMetadata } from "./types";
 
+let idCounter = 1;
+
 const traverse =
 	(traverseModule as any).default?.default ??
 	(traverseModule as any).default ??
@@ -33,14 +35,25 @@ export function analyzeAst(ast: t.File, id: string): FileMetadata {
 			const name = path.node.name;
 
 			if (!t.isJSXIdentifier(name)) return;
+
 			if (!/^[A-Z]/.test(name.name)) return;
 
+			const locatorId = `cmp_${idCounter++}`;
+
 			metadata.usages.push({
+				id: locatorId,
 				name: name.name,
 				line: path.node.loc?.start.line ?? 0,
 				column: path.node.loc?.start.column ?? 0,
 			});
-		},
+
+			path.node.attributes.push(
+				t.jsxAttribute(
+					t.jsxIdentifier("data-locator-id"),
+					t.stringLiteral(locatorId)
+				)
+			);
+		}
 	});
 
 	return metadata;

@@ -6,6 +6,7 @@ export interface ComponentDeclaration {
 }
 
 export interface ComponentUsage {
+	id: string;
 	name: string;
 	line: number;
 	column: number;
