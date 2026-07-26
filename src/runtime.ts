@@ -13,16 +13,18 @@ type LocatorRegistry = Record<string, LocatorMetadata>;
 let registry: LocatorRegistry = {};
 let altPressed = false;
 let currentLocatorId: string | null = null;
+let installed = false;
 
 export async function installRuntime() {
-	console.log("🚀 Runtime started");
+	if (installed) return;
+
+	installed = true;
+
 
 	try {
 		const response = await fetch("/__locator");
 		registry = await response.json();
 
-		console.log("📦 Registry Loaded");
-		console.table(registry);
 	} catch (err) {
 		console.error("Failed to load registry", err);
 	}
@@ -114,3 +116,5 @@ export async function installRuntime() {
 		});
 	});
 }
+
+installRuntime();

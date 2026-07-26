@@ -1,4 +1,3 @@
-
 import type { Plugin, ResolvedConfig } from "vite";
 import { transformReactFile } from "./transform";
 import { installServer } from "./server";
@@ -21,11 +20,9 @@ export function locator(
 
 		configResolved(resolvedConfig) {
 			config = resolvedConfig;
-			console.log("🚀 vite-react-locator loaded");
 		},
 
 		async transform(code, id) {
-			console.log("🔥 transform", id);
 
 			if (!(options.enabled ?? true)) return;
 
@@ -34,11 +31,6 @@ export function locator(
 
 		configureServer(server) {
 			installServer(server);
-		},
-
-		transformIndexHtml(html) {
-			console.log("transformIndexHtml called");
-			return html;
 		},
 
 	};

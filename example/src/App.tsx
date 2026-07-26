@@ -16,7 +16,7 @@ function Counter() {
 
 function App() {
   return (
-    <div>
+    <div  >
       <Header />
       <Counter />
       <h1>vite-react-locator</h1>

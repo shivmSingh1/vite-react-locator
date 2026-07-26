@@ -1,11 +1,8 @@
 {
 	"name": "vite-react-locator",
-	"version": "0.0.1",
+	"version": "1.0.0",
 	"description": "Open React component source in your editor with Alt+Click.",
 	"type": "module",
-	"main": "./dist/index.js",
-	"module": "./dist/index.js",
-	"types": "./dist/index.d.ts",
 	"files": [
 		"dist"
 	],
@@ -26,6 +23,16 @@
 	"license": "MIT",
 	"peerDependencies": {
 		"vite": "^6.0.0 || ^7.0.0"
+	},
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js"
+		},
+		"./runtime": {
+			"types": "./dist/runtime.d.ts",
+			"import": "./dist/runtime.js"
+		}
 	},
 	"devDependencies": {
 		"@types/babel__generator": "^7.27.0",

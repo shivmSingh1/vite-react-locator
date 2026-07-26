@@ -22,8 +22,6 @@ export function transformReactFile(
 		return null;
 	}
 
-	console.log("📄 Transforming:", id);
-
 	const ast = parse(code, {
 		sourceType: "module",
 		plugins: ["typescript", "jsx"],
