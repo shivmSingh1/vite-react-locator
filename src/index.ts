@@ -1,3 +1,4 @@
+
 import type { Plugin, ResolvedConfig } from "vite";
 import { transformReactFile } from "./transform";
 import { installServer } from "./server";
@@ -10,7 +11,6 @@ export function locator(
 	options: LocatorOptions = {}
 ): Plugin {
 
-	console.log("✅ locator() called");
 
 	let config: ResolvedConfig;
 
@@ -36,6 +36,10 @@ export function locator(
 			installServer(server);
 		},
 
+		transformIndexHtml(html) {
+			console.log("transformIndexHtml called");
+			return html;
+		},
 
 	};
 }
