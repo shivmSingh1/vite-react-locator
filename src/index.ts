@@ -1,8 +1,6 @@
 import type { Plugin, ResolvedConfig } from "vite";
 import { transformReactFile } from "./transform";
-
-
-import { registry } from "./registry";
+import { installServer } from "./server";
 
 export interface LocatorOptions {
 	enabled?: boolean;
@@ -35,14 +33,10 @@ export function locator(
 		},
 
 		configureServer(server) {
-			server.middlewares.use("/__locator", (_req, res) => {
-				res.setHeader("Content-Type", "application/json");
-
-				res.end(
-					JSON.stringify(Object.fromEntries(registry))
-				);
-			});
+			installServer(server);
 		},
+
+
 	};
 }
 

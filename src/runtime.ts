@@ -1,8 +1,18 @@
 export async function installRuntime() {
-	const response = await fetch("/__locator");
+	console.log("🚀 Vite React Locator Runtime Started");
 
-	const registry = await response.json();
+	try {
+		const response = await fetch("/__locator");
 
-	console.log("📦 Runtime Registry");
-	console.table(registry);
+		if (!response.ok) {
+			throw new Error("Failed to fetch locator registry");
+		}
+
+		const registry = await response.json();
+
+		console.log("📦 Locator Registry");
+		console.table(registry);
+	} catch (err) {
+		console.error(err);
+	}
 }
