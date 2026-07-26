@@ -21,6 +21,14 @@
 	],
 	"author": "Shivam Singh",
 	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/shivmSingh1/vite-react-locator.git"
+	},
+	"bugs": {
+		"url": "https://github.com/shivmSingh1/vite-react-locator/issues"
+	},
+	"homepage": "https://github.com/shivmSingh1/vite-react-locator#readme",
 	"peerDependencies": {
 		"vite": "^6.0.0 || ^7.0.0"
 	},
