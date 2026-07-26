@@ -6,7 +6,7 @@ console.log("✅ Vite config loaded");
 
 export default defineConfig({
   plugins: [
-    react(),
     locator(),
+    react()
   ],
 });
