@@ -70,7 +70,12 @@ export async function installRuntime() {
 
 		if (!metadata) return;
 
-		showOverlay(target);
+		showOverlay(
+			target,
+			metadata.component,
+			metadata.file,
+			metadata.line
+		);
 
 		console.clear();
 
