@@ -5,14 +5,15 @@ export interface ComponentDeclaration {
 	column: number;
 }
 
-export interface ComponentUsage {
-	id: string;
-	name: string;
-	line: number;
-	column: number;
-}
 
 export interface FileMetadata {
 	declarations: ComponentDeclaration[];
-	usages: ComponentUsage[];
+}
+
+export interface LocatorMetadata {
+	id: string;
+	component: string;
+	file: string;
+	line: number;
+	column: number;
 }

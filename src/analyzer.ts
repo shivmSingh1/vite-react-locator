@@ -2,8 +2,10 @@ import * as traverseModule from "@babel/traverse";
 import type { NodePath } from "@babel/traverse";
 import * as t from "@babel/types";
 import type { FileMetadata } from "./types";
+import { registry } from "./registry";
 
 let idCounter = 1;
+let currentComponent = "";
 
 const traverse =
 	(traverseModule as any).default?.default ??
@@ -13,46 +15,57 @@ const traverse =
 export function analyzeAst(ast: t.File, id: string): FileMetadata {
 	const metadata: FileMetadata = {
 		declarations: [],
-		usages: [],
 	};
 
 	traverse(ast, {
-		FunctionDeclaration(path: NodePath<t.FunctionDeclaration>) {
-			const node = path.node;
+		FunctionDeclaration: {
+			enter(path: NodePath<t.FunctionDeclaration>) {
+				const node = path.node;
 
-			if (!node.id) return;
-			if (!/^[A-Z]/.test(node.id.name)) return;
+				if (!node.id) return;
 
-			metadata.declarations.push({
-				name: node.id.name,
-				file: id,
-				line: node.loc?.start.line ?? 0,
-				column: node.loc?.start.column ?? 0,
-			});
+				if (!/^[A-Z]/.test(node.id.name)) return;
+
+				currentComponent = node.id.name;
+
+				metadata.declarations.push({
+					name: node.id.name,
+					file: id,
+					line: node.loc?.start.line ?? 0,
+					column: node.loc?.start.column ?? 0,
+				});
+			},
+
+			exit() {
+				currentComponent = "";
+			},
 		},
 
-		JSXOpeningElement(path: NodePath<t.JSXOpeningElement>) {
-			const name = path.node.name;
+		ReturnStatement(path: NodePath<t.ReturnStatement>) {
+			const argument = path.node.argument;
 
-			if (!t.isJSXIdentifier(name)) return;
+			if (!argument) return;
 
-			if (!/^[A-Z]/.test(name.name)) return;
+			if (t.isJSXElement(argument)) {
+				const openingElement = argument.openingElement;
 
-			const locatorId = `cmp_${idCounter++}`;
+				const locatorId = `root_${idCounter++}`;
 
-			metadata.usages.push({
-				id: locatorId,
-				name: name.name,
-				line: path.node.loc?.start.line ?? 0,
-				column: path.node.loc?.start.column ?? 0,
-			});
+				registry.set(locatorId, {
+					id: locatorId,
+					component: currentComponent,
+					file: id,
+					line: path.node.loc?.start.line ?? 0,
+					column: path.node.loc?.start.column ?? 0,
+				});
 
-			path.node.attributes.push(
-				t.jsxAttribute(
-					t.jsxIdentifier("data-locator-id"),
-					t.stringLiteral(locatorId)
-				)
-			);
+				openingElement.attributes.push(
+					t.jsxAttribute(
+						t.jsxIdentifier("data-locator-id"),
+						t.stringLiteral(locatorId)
+					)
+				);
+			}
 		}
 	});
 
