@@ -1,6 +1,6 @@
 {
 	"name": "vite-react-locator",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"description": "Instantly jump from your browser to the exact source location of any JSX element.",
 	"type": "module",
 	"files": [

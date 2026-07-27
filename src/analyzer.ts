@@ -5,7 +5,69 @@ import type { FileMetadata } from "./types";
 import { registry } from "./registry";
 
 let idCounter = 1;
-let currentComponent = "";
+function getComponentName(
+	path: NodePath<t.JSXOpeningElement>
+): string | null {
+
+	const component = path.findParent((parent) => {
+
+		// function Home() {}
+		if (parent.isFunctionDeclaration()) {
+			return !!parent.node.id &&
+				/^[A-Z]/.test(parent.node.id.name);
+		}
+
+		// const Home = () => {}
+		if (parent.isVariableDeclarator()) {
+			const { id, init } = parent.node;
+
+			if (!t.isIdentifier(id)) return false;
+
+			if (!/^[A-Z]/.test(id.name)) return false;
+
+			if (
+				t.isArrowFunctionExpression(init) ||
+				t.isFunctionExpression(init)
+			) {
+				return true;
+			}
+
+			if (t.isCallExpression(init)) {
+				const callee =
+					t.isIdentifier(init.callee)
+						? init.callee.name
+						: t.isMemberExpression(init.callee) &&
+							t.isIdentifier(init.callee.property)
+							? init.callee.property.name
+							: "";
+
+				if (callee === "memo" || callee === "forwardRef") {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		return false;
+	});
+
+	if (!component) return null;
+
+	if (component.isFunctionDeclaration()) {
+		return component.node.id?.name ?? null;
+	}
+
+	if (component.isVariableDeclarator()) {
+		const id = component.node.id;
+
+		if (t.isIdentifier(id)) {
+			return id.name;
+		}
+	}
+
+	return null;
+}
 
 const traverse =
 	(traverseModule as any).default?.default ??
@@ -18,29 +80,38 @@ export function analyzeAst(ast: t.File, id: string): FileMetadata {
 	};
 
 	traverse(ast, {
-		FunctionDeclaration: {
-			enter(path: NodePath<t.FunctionDeclaration>) {
-				const node = path.node;
 
-				if (!node.id) return;
+		FunctionDeclaration(path: NodePath<t.FunctionDeclaration>) {
 
-				if (!/^[A-Z]/.test(node.id.name)) return;
+			const node = path.node;
 
-				currentComponent = node.id.name;
+			if (!node.id) return;
 
-				metadata.declarations.push({
-					name: node.id.name,
-					file: id,
-					line: node.loc?.start.line ?? 0,
-					column: node.loc?.start.column ?? 0,
-				});
-			},
+			if (!/^[A-Z]/.test(node.id.name)) return;
 
-			exit() {
-				currentComponent = "";
-			},
+			metadata.declarations.push({
+				name: node.id.name,
+				file: id,
+				line: node.loc?.start.line ?? 0,
+				column: node.loc?.start.column ?? 0,
+			});
 		},
 
+		VariableDeclarator(path: NodePath<t.FunctionDeclaration>) {
+
+			const idNode = path.node.id;
+
+			if (!t.isIdentifier(idNode)) return;
+
+			if (!/^[A-Z]/.test(idNode.name)) return;
+
+			metadata.declarations.push({
+				name: idNode.name,
+				file: id,
+				line: path.node.loc?.start.line ?? 0,
+				column: path.node.loc?.start.column ?? 0,
+			});
+		},
 		// ReturnStatement(path: NodePath<t.ReturnStatement>) {
 		// 	const argument = path.node.argument;
 
@@ -69,13 +140,16 @@ export function analyzeAst(ast: t.File, id: string): FileMetadata {
 		// },
 
 		JSXOpeningElement(path: NodePath<t.JSXOpeningElement>) {
-			if (!currentComponent) return;
+
+			const component = getComponentName(path);
+
+			if (!component) return;
 
 			const locatorId = `node_${idCounter++}`;
 
 			registry.set(locatorId, {
 				id: locatorId,
-				component: currentComponent,
+				component,
 				file: id,
 				line: path.node.loc?.start.line ?? 0,
 				column: path.node.loc?.start.column ?? 0,

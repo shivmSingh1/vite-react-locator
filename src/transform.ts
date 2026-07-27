@@ -9,6 +9,7 @@ const generate =
 	(generatorModule as any).default ??
 	generatorModule;
 
+
 export function transformReactFile(
 	code: string,
 	id: string,

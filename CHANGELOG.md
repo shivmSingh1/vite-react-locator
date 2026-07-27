@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## 1.1.1
+
+### Fixed
+
+- Fixed React component detection for components declared with arrow functions.
+- Fixed component detection for `memo()` and `forwardRef()` wrapped components.
+- Improved JSX element source mapping across modern React component patterns.
+- Fixed incorrect parent component resolution in projects using arrow function components.
+- Improved compatibility with React 19 projects and newer Vite setups.
+
+---
+
 ## 1.1.0
 
 ### Added

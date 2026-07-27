@@ -284,17 +284,13 @@ Done ✅
 
 # 🆕
 
-## v1.1.0
+## v1.1.1
 
-### Added
+### Fixed
 
-- 🎯 Locate any JSX element
-- 🖱️ Ctrl + Click opens the exact source location of the hovered JSX element
-
-### Improved
-
-- Better source mapping for nested JSX elements
-- More accurate Babel AST transformation
+- 🛠 Fixed React component detection for arrow function components.
+- 🛠 Fixed support for memo() and forwardRef() wrapped components.
+- 🛠 Improved JSX source mapping reliability across modern React projects.
 
 ---
 
@@ -319,6 +315,13 @@ Done ✅
 - [x] Locate any JSX element
 - [x] Exact source mapping for JSX elements
 - [x] Ctrl + Click opens the exact source location
+
+## v1.1.1
+
+- [x] Improved React component detection
+- [x] Better compatibility with arrow function components
+- [x] Support for memo() and forwardRef() wrapped components
+- [x] Improved source mapping reliability
 
 
 ## Future
