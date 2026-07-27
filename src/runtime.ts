@@ -1,3 +1,4 @@
+import type { ActivationKey } from "./index";
 import { showOverlay, hideOverlay } from "./overlay";
 
 interface LocatorMetadata {
@@ -8,43 +9,101 @@ interface LocatorMetadata {
 	column: number;
 }
 
+interface RuntimeOptions {
+	activationKey: ActivationKey;
+}
+
+interface ParsedActivationKey {
+	ctrl: boolean;
+	alt: boolean;
+	shift: boolean;
+	meta: boolean;
+}
+
+let activation: ParsedActivationKey = {
+	ctrl: true,
+	alt: false,
+	shift: false,
+	meta: false,
+};
+
+
 type LocatorRegistry = Record<string, LocatorMetadata>;
 
 let registry: LocatorRegistry = {};
-let altPressed = false;
+let runtimeOptions: RuntimeOptions = {
+	activationKey: "Ctrl",
+};
 let currentLocatorId: string | null = null;
 let installed = false;
+
+function parseActivationKey(
+	key: ActivationKey
+): ParsedActivationKey {
+	const keys = key
+		.split("+")
+		.map((k) => k.trim().toLowerCase());
+
+	return {
+		ctrl: keys.includes("ctrl"),
+		alt: keys.includes("alt"),
+		shift: keys.includes("shift"),
+		meta: keys.includes("meta"),
+	};
+}
+
+function isActivationPressed(
+	e: Pick<
+		KeyboardEvent | MouseEvent,
+		"ctrlKey" | "altKey" | "shiftKey" | "metaKey"
+	>
+) {
+	return (
+		e.ctrlKey === activation.ctrl &&
+		e.altKey === activation.alt &&
+		e.shiftKey === activation.shift &&
+		e.metaKey === activation.meta
+	);
+}
+
+
+function hasModifierKey(
+	e: Pick<
+		KeyboardEvent | MouseEvent,
+		"ctrlKey" | "altKey" | "shiftKey" | "metaKey"
+	>
+) {
+	return e.ctrlKey || e.altKey || e.shiftKey || e.metaKey;
+}
 
 export async function installRuntime() {
 	if (installed) return;
 
 	installed = true;
 
-
 	try {
-		const response = await fetch("/__locator");
-		registry = await response.json();
+		const [registryResponse, optionsResponse] = await Promise.all([
+			fetch("/__locator"),
+			fetch("/__locator-options"),
+		]);
 
+		registry = await registryResponse.json();
+		runtimeOptions = await optionsResponse.json();
+		activation = parseActivationKey(runtimeOptions.activationKey);
 	} catch (err) {
-		console.error("Failed to load registry", err);
+		console.error("Failed to load locator runtime", err);
 	}
 
-	window.addEventListener("keydown", (e) => {
-		if (e.key === "Alt") {
-			altPressed = true;
-		}
-	});
 
 	window.addEventListener("keyup", (e) => {
-		if (e.key === "Alt") {
-			altPressed = false;
+		if (!hasModifierKey(e)) {
 			currentLocatorId = null;
 			hideOverlay();
 		}
 	});
 
 	window.addEventListener("mousemove", (event) => {
-		if (!altPressed) return;
+		if (!isActivationPressed(event)) return;
 
 		const element = document.elementFromPoint(
 			event.clientX,
@@ -79,11 +138,10 @@ export async function installRuntime() {
 			metadata.line
 		);
 
-		console.clear();
 	});
 
 	window.addEventListener("click", async (event) => {
-		if (!altPressed) return;
+		if (!isActivationPressed(event)) return;
 
 		const element = document.elementFromPoint(
 			event.clientX,

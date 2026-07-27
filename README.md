@@ -2,7 +2,9 @@
 
 # 🚀 vite-react-locator
 
-### Instantly open any React component in your editor with **Alt + Click**
+### Instantly jump from your browser to the source code of any React component.
+
+**Default:** Ctrl + Click • **Fully configurable**
 
 
 <p align="center">
@@ -16,7 +18,9 @@
 
 </p>
 
-A lightweight Vite plugin that lets you **hover React components**, inspect their source location, and **jump directly to the component file** in your editor using **Alt + Click**.
+A lightweight Vite plugin that lets you hover React components, inspect their source location, and jump directly to the component file in your editor.
+
+No browser extensions required.
 
 </div>
 
@@ -28,14 +32,19 @@ A lightweight Vite plugin that lets you **hover React components**, inspect thei
 - ⚛️ Works with React + Vite
 - 🔍 Detects React components automatically
 - 🟦 Beautiful hover overlay
+- ⚡ No browser extensions required
+- 🔥 Opens components at the exact source location
 - 💬 Tooltip showing:
   - Component name
   - File name
   - Line number
-- 🖱️ **Alt + Click** opens the component in VS Code
+- 🖱️ **Ctrl + Click** opens the component in VS Code
+- ⌨️ Configurable activation key
 - 🚀 Babel AST based transformation
 - 📝 TypeScript support
 - 📦 Zero runtime configuration
+
+> 💡 Works only in development mode. Nothing is included in your production build.
 
 ---
 
@@ -49,7 +58,7 @@ A lightweight Vite plugin that lets you **hover React components**, inspect thei
 
 ---
 
-## Alt + Click
+## Ctrl + Click
 
 <p align="center">
 <img src="./assets/open-editor.png" width="900">
@@ -74,6 +83,19 @@ or
 ```bash
 yarn add -D vite-react-locator
 ```
+
+---
+
+# ✅ Compatibility
+
+| Tool | Version / Status |
+|------|------------------|
+| Vite | 5+ |
+| React | 18+ |
+| TypeScript | ✅ Supported |
+| JavaScript | ✅ Supported |
+| Development Mode | ✅ Supported |
+| Production Build | Not required |
 
 ---
 
@@ -116,13 +138,41 @@ npm run dev
 
 ---
 
+## Optional Configuration
+
+```ts
+locator({
+  activationKey: "Ctrl", // default
+});
+```
+
+Examples:
+
+```ts
+locator({ activationKey: "Alt" });
+locator({ activationKey: "Ctrl+Shift" });
+locator({ activationKey: "Ctrl+Alt" });
+locator({ activationKey: "Ctrl+Alt+Shift" });
+```
+
+Supports any combination of:
+
+- Ctrl
+- Alt
+- Shift
+- Meta
+
+If no activation key is specified, **Ctrl** is used by default.
+
+---
+
 # 🎯 How to Use
 
-1. Hold the **Alt** key.
+1. Hold the configured activation key (default: **Ctrl**).
 2. Hover over any React component.
 3. A blue overlay and tooltip will appear.
-4. Press **Alt + Click**.
-5. The component opens instantly in your editor.
+4. Click the component.
+5. It opens instantly in your editor.
 
 ---
 
@@ -136,7 +186,7 @@ function LoginButton() {
 }
 ```
 
-Move your mouse over the button while holding **Alt**.
+Move your mouse over the button while holding **Ctrl**.
 
 You will see
 
@@ -148,7 +198,7 @@ LoginButton.tsx:8
 Now press
 
 ```
-Alt + Click
+Ctrl + Click
 ```
 
 VS Code instantly opens
@@ -179,7 +229,7 @@ Runtime detects hovered component
 Tooltip + Overlay
         │
         ▼
-Alt + Click
+Ctrl + Click
         │
         ▼
 Vite Dev Server
@@ -218,7 +268,7 @@ Find Line
 With vite-react-locator
 
 ```
-Alt + Click
+Ctrl + Click
 
 ↓
 
@@ -238,15 +288,38 @@ Done ✅
 
 ---
 
+# 🆕
+
+## v1.0.1
+
+### Added
+
+- ⌨️ Configurable activation key
+- 🎯 Support for key combinations
+- 📝 Type-safe activation key configuration
+
+### Changed
+
+- Default activation key is now **Ctrl** instead of **Alt**.
+- Improved Windows browser compatibility by avoiding the native Alt menu behavior.
+
+---
+
 # 📋 Roadmap
 
-## v1.0
+## v1.0.0
 
-- [x] React component detection
+- [x] Component detection
 - [x] Overlay
 - [x] Tooltip
-- [x] Alt + Click
+- [x] Editor integration
 - [x] VS Code support
+- [x] Runtime
+
+## v1.0.1
+
+- [x] Configurable activation key
+- [x] Ctrl as default activation key
 
 ## v1.1
 
@@ -257,7 +330,6 @@ Done ✅
 
 ## v1.2
 
-- [ ] Configurable activation key
 - [ ] Editor selection
 - [ ] Custom overlay colors
 

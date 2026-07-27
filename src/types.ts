@@ -17,3 +17,11 @@ export interface LocatorMetadata {
 	line: number;
 	column: number;
 }
+
+export interface LocatorOptions {
+	activationKey?: string;
+}
+
+export const DEFAULT_OPTIONS: Required<LocatorOptions> = {
+	activationKey: "Alt",
+};

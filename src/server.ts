@@ -2,8 +2,9 @@ import type { ViteDevServer } from "vite";
 import { registry } from "./registry";
 import { editor } from "./editors";
 import type { IncomingMessage, ServerResponse } from "node:http";
+import type { LocatorOptions } from "./index";
 
-export function installServer(server: ViteDevServer) {
+export function installServer(server: ViteDevServer, options: LocatorOptions) {
 
 	server.middlewares.use("/__locator", (_req, res) => {
 		res.setHeader("Content-Type", "application/json");
@@ -47,5 +48,10 @@ export function installServer(server: ViteDevServer) {
 			});
 		}
 	);
+
+	server.middlewares.use("/__locator-options", (_req, res) => {
+		res.setHeader("Content-Type", "application/json");
+		res.end(JSON.stringify(options));
+	});
 
 }
