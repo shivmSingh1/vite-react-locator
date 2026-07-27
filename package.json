@@ -1,7 +1,7 @@
 {
 	"name": "vite-react-locator",
-	"version": "1.0.0",
-	"description": "Open React component source in your editor with Alt+Click.",
+	"version": "1.0.1",
+	"description": "Open React component source in your editor with Ctrl+Click.",
 	"type": "module",
 	"files": [
 		"dist"
@@ -14,10 +14,15 @@
 	},
 	"keywords": [
 		"vite",
+		"vite-plugin",
 		"react",
+		"react-plugin",
+		"component",
 		"locator",
+		"source",
 		"vscode",
-		"plugin"
+		"typescript",
+		"developer-tools"
 	],
 	"author": "Shivam Singh",
 	"license": "MIT",
@@ -29,6 +34,12 @@
 		"url": "https://github.com/shivmSingh1/vite-react-locator/issues"
 	},
 	"homepage": "https://github.com/shivmSingh1/vite-react-locator#readme",
+	"publishConfig": {
+		"access": "public"
+	},
+	"engines": {
+		"node": ">=18"
+	},
 	"peerDependencies": {
 		"vite": "^6.0.0 || ^7.0.0"
 	},
