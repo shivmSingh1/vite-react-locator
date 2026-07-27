@@ -41,31 +41,52 @@ export function analyzeAst(ast: t.File, id: string): FileMetadata {
 			},
 		},
 
-		ReturnStatement(path: NodePath<t.ReturnStatement>) {
-			const argument = path.node.argument;
+		// ReturnStatement(path: NodePath<t.ReturnStatement>) {
+		// 	const argument = path.node.argument;
 
-			if (!argument) return;
+		// 	if (!argument) return;
 
-			if (t.isJSXElement(argument)) {
-				const openingElement = argument.openingElement;
+		// 	if (t.isJSXElement(argument)) {
+		// 		const openingElement = argument.openingElement;
 
-				const locatorId = `root_${idCounter++}`;
+		// 		const locatorId = `root_${idCounter++}`;
 
-				registry.set(locatorId, {
-					id: locatorId,
-					component: currentComponent,
-					file: id,
-					line: path.node.loc?.start.line ?? 0,
-					column: path.node.loc?.start.column ?? 0,
-				});
+		// 		registry.set(locatorId, {
+		// 			id: locatorId,
+		// 			component: currentComponent,
+		// 			file: id,
+		// 			line: path.node.loc?.start.line ?? 0,
+		// 			column: path.node.loc?.start.column ?? 0,
+		// 		});
 
-				openingElement.attributes.push(
-					t.jsxAttribute(
-						t.jsxIdentifier("data-locator-id"),
-						t.stringLiteral(locatorId)
-					)
-				);
-			}
+		// 		openingElement.attributes.push(
+		// 			t.jsxAttribute(
+		// 				t.jsxIdentifier("data-locator-id"),
+		// 				t.stringLiteral(locatorId)
+		// 			)
+		// 		);
+		// 	}
+		// },
+
+		JSXOpeningElement(path: NodePath<t.JSXOpeningElement>) {
+			if (!currentComponent) return;
+
+			const locatorId = `node_${idCounter++}`;
+
+			registry.set(locatorId, {
+				id: locatorId,
+				component: currentComponent,
+				file: id,
+				line: path.node.loc?.start.line ?? 0,
+				column: path.node.loc?.start.column ?? 0,
+			});
+
+			path.node.attributes.push(
+				t.jsxAttribute(
+					t.jsxIdentifier("data-locator-id"),
+					t.stringLiteral(locatorId)
+				)
+			);
 		}
 	});
 

@@ -2,7 +2,7 @@
 
 # 🚀 vite-react-locator
 
-### Instantly jump from your browser to the source code of any React component.
+### Instantly jump from your browser to the exact source location of any JSX element.
 
 **Default:** Ctrl + Click • **Fully configurable**
 
@@ -18,7 +18,7 @@
 
 </p>
 
-A lightweight Vite plugin that lets you hover React components, inspect their source location, and jump directly to the component file in your editor.
+A lightweight Vite plugin that lets you hover any JSX element, inspect its source location, and jump directly to the exact line in your editor.
 
 No browser extensions required.
 
@@ -38,15 +38,15 @@ No browser extensions required.
 
 - ⚡ Lightweight and fast
 - ⚛️ Works with React + Vite
-- 🔍 Detects React components automatically
+- 🔍 Detects any JSX element automatically
 - 🟦 Beautiful hover overlay
 - ⚡ No browser extensions required
-- 🔥 Opens components at the exact source location
+- 🔥 Opens the exact source location of the hovered JSX element
 - 💬 Tooltip showing:
   - Component name
   - File name
   - Line number
-- 🖱️ **Ctrl + Click** opens the component in VS Code
+- 🖱️ **Ctrl + Click** opens the hovered JSX element in VS Code
 - ⌨️ Configurable activation key
 - 🚀 Babel AST based transformation
 - 📝 TypeScript support
@@ -58,7 +58,7 @@ No browser extensions required.
 
 # 📸 Demo
 
-## Hover any React component
+## Hover any JSX element
 
 <p align="center">
 <img src="./assets/hover.png" width="500">
@@ -177,9 +177,9 @@ If no activation key is specified, **Ctrl** is used by default.
 # 🎯 How to Use
 
 1. Hold the configured activation key (default: **Ctrl**).
-2. Hover over any React component.
+2. Hover over any JSX element.
 3. A blue overlay and tooltip will appear.
-4. Click the component.
+4. Click the highlighted element.
 5. It opens instantly in your editor.
 
 ---
@@ -190,32 +190,18 @@ Suppose your application contains
 
 ```tsx
 function LoginButton() {
-    return <button>Login</button>;
+    return (
+        <button>
+            <span>Login</span>
+        </button>
+    );
 }
 ```
 
-Move your mouse over the button while holding **Ctrl**.
+Hover over the `<button>` or the `<span>` while holding **Ctrl**.
 
-You will see
+The hovered JSX element is highlighted, and **Ctrl + Click** opens its exact source location in VS Code.
 
-```
-LoginButton
-LoginButton.tsx:8
-```
-
-Now press
-
-```
-Ctrl + Click
-```
-
-VS Code instantly opens
-
-```
-src/components/LoginButton.tsx
-```
-
-at the correct line.
 
 ---
 
@@ -231,7 +217,7 @@ Babel AST Transform
 Inject Locator Metadata
         │
         ▼
-Runtime detects hovered component
+Runtime detects hovered JSX element
         │
         ▼
 Tooltip + Overlay
@@ -258,11 +244,11 @@ Inspect Component
 
 ↓
 
-Search Component Name
+Inspect Element
 
 ↓
 
-Search Folder
+Search JSX
 
 ↓
 
@@ -298,18 +284,17 @@ Done ✅
 
 # 🆕
 
-## v1.0.1
+## v1.1.0
 
 ### Added
 
-- ⌨️ Configurable activation key
-- 🎯 Support for key combinations
-- 📝 Type-safe activation key configuration
+- 🎯 Locate any JSX element
+- 🖱️ Ctrl + Click opens the exact source location of the hovered JSX element
 
-### Changed
+### Improved
 
-- Default activation key is now **Ctrl** instead of **Alt**.
-- Improved Windows browser compatibility by avoiding the native Alt menu behavior.
+- Better source mapping for nested JSX elements
+- More accurate Babel AST transformation
 
 ---
 
@@ -329,15 +314,17 @@ Done ✅
 - [x] Configurable activation key
 - [x] Ctrl as default activation key
 
-## v1.1
+## v1.1.0
 
+- [x] Locate any JSX element
+- [x] Exact source mapping for JSX elements
+- [x] Ctrl + Click opens the exact source location
+
+
+## Future
 - [ ] Cursor support
-- [ ] WebStorm support
-- [ ] VS Code Insiders
+- [ ] VS Code Insiders support
 - [ ] Better tooltip
-
-## v1.2
-
 - [ ] Editor selection
 - [ ] Custom overlay colors
 

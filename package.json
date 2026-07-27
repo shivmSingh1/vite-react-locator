@@ -1,7 +1,7 @@
 {
 	"name": "vite-react-locator",
-	"version": "1.0.1",
-	"description": "Open React component source in your editor with Ctrl+Click.",
+	"version": "1.1.0",
+	"description": "Instantly jump from your browser to the exact source location of any JSX element.",
 	"type": "module",
 	"files": [
 		"dist"
@@ -16,15 +16,19 @@
 		"vite",
 		"vite-plugin",
 		"react",
-		"react-plugin",
-		"component",
+		"jsx",
 		"locator",
+		"component",
 		"source",
+		"editor",
 		"vscode",
 		"typescript",
 		"developer-tools"
 	],
-	"author": "Shivam Singh",
+	"author": {
+		"name": "Shivam Singh",
+		"url": "https://github.com/shivmSingh1"
+	},
 	"license": "MIT",
 	"repository": {
 		"type": "git",

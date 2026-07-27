@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+---
+
+## 1.1.0
+
+### Added
+
+- Locate any JSX element, not just component roots
+- Hover overlay for all JSX elements
+- Ctrl + Click opens the exact source location of the hovered JSX element
+- Precise source mapping for nested JSX elements
+
+### Improved
+
+- Reworked Babel AST analysis for per-element metadata injection
+- Improved source location accuracy across JSX trees
+- Better developer experience when navigating React applications
+
+---
+
 ## 1.0.1
 
 ### Added
