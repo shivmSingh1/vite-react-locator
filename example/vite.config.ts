@@ -5,8 +5,6 @@ import locator from "../dist/index.js";
 export default defineConfig({
   plugins: [
     react(),
-    locator({
-      activationKey: "Ctrl+Shift"
-    }),
+    locator(),
   ],
 });

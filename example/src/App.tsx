@@ -1,27 +1,32 @@
-import { useState } from "react";
+import Navbar from "./components/Navbar";
+import Sidebar from "./components/Sidebar";
+import StatsGrid from "./components/StatsGrid";
+import UserProfile from "./components/UserProfile";
+import Footer from "./components/Footer";
 
-function Header() {
-  return <h2>Header Component</h2>;
-}
-
-function Counter() {
-  const [count, setCount] = useState(0);
-
+export default function App() {
   return (
-    <button onClick={() => setCount((c) => c + 1)}>
-      Count: {count}
-    </button>
+    <>
+      <Navbar />
+
+      <main className="layout">
+        <Sidebar />
+
+        <section className="content">
+          <h1>Dashboard</h1>
+
+          <p>
+            Hold <strong>Ctrl</strong> and click any component to
+            open its source.
+          </p>
+
+          <StatsGrid />
+
+          <UserProfile />
+        </section>
+      </main>
+
+      <Footer />
+    </>
   );
 }
-
-function App() {
-  return (
-    <div  >
-      <Header />
-      <Counter />
-      <h1>vite-react-locator</h1>
-    </div>
-  );
-}
-
-export default App;
