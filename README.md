@@ -26,6 +26,14 @@ No browser extensions required.
 
 ---
 
+# 🎬 Demo
+
+<p align="center">
+  <img src="./assets/demo.gif" width="500" alt="vite-react-locator demo">
+</p>
+
+---
+
 # ✨ Features
 
 - ⚡ Lightweight and fast
@@ -53,7 +61,7 @@ No browser extensions required.
 ## Hover any React component
 
 <p align="center">
-<img src="./assets/hover.png" width="900">
+<img src="./assets/hover.png" width="500">
 </p>
 
 ---
@@ -61,7 +69,7 @@ No browser extensions required.
 ## Ctrl + Click
 
 <p align="center">
-<img src="./assets/open-editor.png" width="900">
+<img src="./assets/editor-open.png" width="500">
 </p>
 
 ---
