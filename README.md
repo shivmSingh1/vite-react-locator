@@ -101,10 +101,9 @@ yarn add -D vite-react-locator
 | Production Build | Not included |
 
 ---
-
 # 🚀 Usage
 
-## Add the plugin
+## 1. Add the plugin
 
 ```ts
 // vite.config.ts
@@ -121,34 +120,39 @@ export default defineConfig({
 });
 ```
 
-That's it — the plugin automatically injects its browser runtime into your app's HTML in development. There is no manual `import` step required.
+## 2. Import the runtime
+
+Import the runtime once in your application entry file (for example `main.tsx`, `main.jsx`, `index.tsx`, or `index.jsx`).
+
+```ts
+import "vite-react-locator/runtime";
+```
+
+Example:
+
+```tsx
+// main.tsx
+
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+
+import "vite-react-locator/runtime";
+
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+);
+```
+
+## 3. Start the development server
 
 ```bash
 npm run dev
 ```
 
----
-
-## Optional Configuration
-
-```ts
-locator({
-  enabled: true,       // default: true
-  activationKey: "Ctrl", // default: "Ctrl"
-});
-```
-
-`activationKey` accepts any single modifier or combination of:
-
-- `Ctrl`
-- `Alt`
-- `Shift`
-- `Meta`
-
-Examples: `"Alt"`, `"Ctrl+Shift"`, `"Ctrl+Alt"`, `"Ctrl+Alt+Shift"`, `"Ctrl+Alt+Shift+Meta"`.
-
-Set `enabled: false` to disable the plugin without removing it (transform, HTML injection, and dev-server routes are all skipped).
-
+> 💡 The runtime import is required only during development. It has no effect on your production build.
 ---
 
 # 🎯 How to Use

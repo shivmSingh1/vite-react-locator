@@ -1,7 +1,15 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+---
+## 2.0.1
 
+### Documentation
+
+- Updated README to clarify that the runtime must currently be imported manually:
+
+  ```ts
+  import "vite-react-locator/runtime";
 ---
 
 ## 2.0.0
