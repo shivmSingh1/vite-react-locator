@@ -1,16 +1,14 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-	entry: [
-		"src/index.ts",
-		"src/runtime.ts",
-		"src/client.ts",
-	],
+	entry: {
+		index: "src/index.ts",
+		runtime: "src/runtime/index.ts",
+	},
 	format: ["esm"],
 	dts: true,
 	sourcemap: true,
 	clean: true,
 	target: "es2022",
-
 	splitting: false,
 });

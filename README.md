@@ -6,7 +6,6 @@
 
 **Default:** Ctrl + Click • **Fully configurable**
 
-
 <p align="center">
 
 [![npm version](https://img.shields.io/npm/v/vite-react-locator.svg)](https://www.npmjs.com/package/vite-react-locator)
@@ -20,7 +19,7 @@
 
 A lightweight Vite plugin that lets you hover any JSX element, inspect its source location, and jump directly to the exact line in your editor.
 
-No browser extensions required.
+If React renders it, Locator can locate it.
 
 </div>
 
@@ -36,23 +35,19 @@ No browser extensions required.
 
 # ✨ Features
 
-- ⚡ Lightweight and fast
-- ⚛️ Works with React + Vite
-- 🔍 Detects any JSX element automatically
-- 🟦 Beautiful hover overlay
-- ⚡ No browser extensions required
-- 🔥 Opens the exact source location of the hovered JSX element
-- 💬 Tooltip showing:
-  - Component name
-  - File name
-  - Line number
-- 🖱️ **Ctrl + Click** opens the hovered JSX element in VS Code
-- ⌨️ Configurable activation key
-- 🚀 Babel AST based transformation
-- 📝 TypeScript support
-- 📦 Zero runtime configuration
+- ⚡ Single Babel AST traversal per file — fast, deterministic, stable SHA1-based ids
+- ⚛️ Every HTML element, every SVG element, and every React component
+- 🧩 Function components, arrow components, `memo()`, `forwardRef()`, `lazy()`, `Suspense`, Portals (`createPortal`)
+- 🌳 Full parent/child DOM hierarchy and component ownership per element
+- 🔁 Understands how an element was rendered — `.map()` / `.filter().map()` / `flatMap()`, nested arrays, `&&`, ternaries, and `switch` cases
+- 🪝 Tracks all React hooks (including custom `useXxx` hooks) used by each component
+- 🟦 Hover overlay with component name, file, and line
+- 🖱️ **Ctrl + Click** (fully configurable) opens the exact source location in your editor
+- 🧠 VS Code, Cursor, and Windsurf supported out of the box
+- 📦 Development only — the transform, registry, and runtime never ship to production
+- 📝 Strict TypeScript, zero `any`, zero runtime dependency on Node internals in the browser bundle
 
-> 💡 Works only in development mode. Nothing is included in your production build.
+> 💡 Works only in development mode (`apply: "serve"`). Nothing is included in your production build.
 
 ---
 
@@ -98,18 +93,18 @@ yarn add -D vite-react-locator
 
 | Tool | Version / Status |
 |------|------------------|
-| Vite | 5+ |
-| React | 18+ |
+| Vite | ^6.0.0 \|\| ^7.0.0 |
+| React | 17+ |
 | TypeScript | ✅ Supported |
-| JavaScript | ✅ Supported |
+| JavaScript | ✅ Supported (`.jsx`) |
 | Development Mode | ✅ Supported |
-| Production Build | Not required |
+| Production Build | Not included |
 
 ---
 
 # 🚀 Usage
 
-## 1. Add the plugin
+## Add the plugin
 
 ```ts
 // vite.config.ts
@@ -126,19 +121,7 @@ export default defineConfig({
 });
 ```
 
----
-
-## 2. Import the runtime
-
-```ts
-// src/main.tsx
-
-import "vite-react-locator/runtime";
-```
-
-That's it.
-
-Start your dev server.
+That's it — the plugin automatically injects its browser runtime into your app's HTML in development. There is no manual `import` step required.
 
 ```bash
 npm run dev
@@ -150,124 +133,74 @@ npm run dev
 
 ```ts
 locator({
-  activationKey: "Ctrl", // default
+  enabled: true,       // default: true
+  activationKey: "Ctrl", // default: "Ctrl"
 });
 ```
 
-Examples:
+`activationKey` accepts any single modifier or combination of:
 
-```ts
-locator({ activationKey: "Alt" });
-locator({ activationKey: "Ctrl+Shift" });
-locator({ activationKey: "Ctrl+Alt" });
-locator({ activationKey: "Ctrl+Alt+Shift" });
-```
+- `Ctrl`
+- `Alt`
+- `Shift`
+- `Meta`
 
-Supports any combination of:
+Examples: `"Alt"`, `"Ctrl+Shift"`, `"Ctrl+Alt"`, `"Ctrl+Alt+Shift"`, `"Ctrl+Alt+Shift+Meta"`.
 
-- Ctrl
-- Alt
-- Shift
-- Meta
-
-If no activation key is specified, **Ctrl** is used by default.
+Set `enabled: false` to disable the plugin without removing it (transform, HTML injection, and dev-server routes are all skipped).
 
 ---
 
 # 🎯 How to Use
 
 1. Hold the configured activation key (default: **Ctrl**).
-2. Hover over any JSX element.
-3. A blue overlay and tooltip will appear.
+2. Hover over any JSX element — HTML, SVG, or a component.
+3. A blue overlay and tooltip appear showing the component, file, and line.
 4. Click the highlighted element.
-5. It opens instantly in your editor.
-
----
-
-# 📖 Example
-
-Suppose your application contains
-
-```tsx
-function LoginButton() {
-    return (
-        <button>
-            <span>Login</span>
-        </button>
-    );
-}
-```
-
-Hover over the `<button>` or the `<span>` while holding **Ctrl**.
-
-The hovered JSX element is highlighted, and **Ctrl + Click** opens its exact source location in VS Code.
-
+5. It opens instantly in VS Code, Cursor, or Windsurf.
 
 ---
 
 # ⚙️ How It Works
 
 ```
-React Component
+React/TSX source
         │
         ▼
-Babel AST Transform
+Single Babel traversal (transform/)
+        │  component detection · JSX classification
+        │  hierarchy tracking · hook tracking
+        ▼
+Stable SHA1 locator ids injected as data-locator-id
         │
         ▼
-Inject Locator Metadata
+Registry served over /__locator + /__locator-options
         │
         ▼
-Runtime detects hovered JSX element
+Runtime (browser) hovers via data-locator-id, shows overlay
         │
         ▼
-Tooltip + Overlay
+Ctrl + Click → POST /__open { file, line, column }
         │
         ▼
-Ctrl + Click
-        │
-        ▼
-Vite Dev Server
-        │
-        ▼
-Open VS Code
+Dev server opens the file in VS Code / Cursor / Windsurf
 ```
 
 ---
 
-
-# ⚡ Why use vite-react-locator?
-
-Without this plugin
+# 🧩 Architecture
 
 ```
-Inspect Component
-
-↓
-
-Inspect Element
-
-↓
-
-Search JSX
-
-↓
-
-Open File
-
-↓
-
-Find Line
+src/
+  index.ts          — Vite plugin: transform hook, HTML injection, dev-server wiring
+  shared/            — constants, hashing, tag classification, shared types
+  transform/         — single-pass Babel visitor: components, JSX, hierarchy, hooks, injection
+  runtime/           — browser code: hover overlay, activation-key handling, open requests
+  server/            — dev-server routes (/__locator, /__locator-options, /__open) + editors
+  tests/             — vitest suite
 ```
 
-With vite-react-locator
-
-```
-Ctrl + Click
-
-↓
-
-Done ✅
-```
+The transform runs once per file (`enforce: "pre"`, before `@vitejs/plugin-react`), tags every JSX element with a content-addressed id, and records its metadata — tag, kind (`html` / `svg` / `component` / `fragment` / `portal`), owning component, parent/child hierarchy, hooks, and how it was rendered (`normal` / `map` / `array` / `logical` / `ternary` / `conditional`).
 
 ---
 
@@ -276,68 +209,29 @@ Done ✅
 | Editor | Status |
 |---------|--------|
 | VS Code | ✅ |
-| Cursor | 🚧 Planned |
-| VS Code Insiders | 🚧 Planned |
-| WebStorm | 🚧 Planned |
+| Cursor | ✅ |
+| Windsurf | ✅ |
+
+The editor is auto-detected from `TERM_PROGRAM`, falling back to trying `cursor`, `windsurf`, then `code` on the `$PATH`.
 
 ---
 
-# 🆕
+# 🧪 Development
 
-## v1.1.1
+```bash
+npm install
+npm run build   # tsup — bundles src/index.ts and src/runtime/index.ts
+npm run test    # vitest
+npm run lint    # eslint
+```
 
-### Fixed
-
-- 🛠 Fixed React component detection for arrow function components.
-- 🛠 Fixed support for memo() and forwardRef() wrapped components.
-- 🛠 Improved JSX source mapping reliability across modern React projects.
-
----
-
-# 📋 Roadmap
-
-## v1.0.0
-
-- [x] Component detection
-- [x] Overlay
-- [x] Tooltip
-- [x] Editor integration
-- [x] VS Code support
-- [x] Runtime
-
-## v1.0.1
-
-- [x] Configurable activation key
-- [x] Ctrl as default activation key
-
-## v1.1.0
-
-- [x] Locate any JSX element
-- [x] Exact source mapping for JSX elements
-- [x] Ctrl + Click opens the exact source location
-
-## v1.1.1
-
-- [x] Improved React component detection
-- [x] Better compatibility with arrow function components
-- [x] Support for memo() and forwardRef() wrapped components
-- [x] Improved source mapping reliability
-
-
-## Future
-- [ ] Cursor support
-- [ ] VS Code Insiders support
-- [ ] Better tooltip
-- [ ] Editor selection
-- [ ] Custom overlay colors
+The `example/` app is a working Vite + React project wired to consume the local plugin as a real `file:` dependency, useful for end-to-end verification against a real dev server.
 
 ---
 
 # 🤝 Contributing
 
 Contributions are welcome.
-
-If you'd like to improve the project:
 
 1. Fork the repository
 2. Create your feature branch
@@ -352,25 +246,17 @@ git checkout -b feature/amazing-feature
 git commit -m "feat: add amazing feature"
 ```
 
-4. Push
-
-```bash
-git push origin feature/amazing-feature
-```
-
-5. Open a Pull Request
+4. Push and open a Pull Request.
 
 ---
 
 # 🐞 Found a Bug?
 
-Please open an issue on GitHub.
-
-Include
+Please open an issue on GitHub and include:
 
 - Vite version
 - React version
-- Operating System
+- Operating system
 - Steps to reproduce
 
 ---
@@ -378,16 +264,6 @@ Include
 # 📄 License
 
 MIT License © Shivam Singh
-
----
-
-# ⭐ Support
-
-If this project saves you time,
-
-please consider giving it a ⭐ on GitHub.
-
-It helps the project reach more developers.
 
 ---
 

@@ -1,4 +1,12 @@
-import type { Plugin, ResolvedConfig } from "vite";
+import type { HtmlTagDescriptor, Plugin, ResolvedConfig } from "vite";
+
+import {
+	DEFAULT_ACTIVATION_KEY,
+	RESOLVED_VIRTUAL_CLIENT_MODULE_ID,
+	RUNTIME_ENTRY_SPECIFIER,
+	VIRTUAL_CLIENT_MODULE_ID,
+} from "./shared/constants";
+
 import { transformReactFile } from "./transform";
 import { installServer } from "./server";
 
@@ -21,20 +29,17 @@ export type ActivationKey =
 
 export interface LocatorOptions {
 	enabled?: boolean;
+
 	activationKey?: ActivationKey;
 }
 
 const DEFAULT_OPTIONS: Required<LocatorOptions> = {
 	enabled: true,
-	activationKey: "Ctrl",
+	activationKey: DEFAULT_ACTIVATION_KEY,
 };
 
-export function locator(
-	options: LocatorOptions = {}
-): Plugin {
-
-
-	const resolvedOptions = {
+export function locator(options: LocatorOptions = {}): Plugin {
+	const resolvedOptions: Required<LocatorOptions> = {
 		...DEFAULT_OPTIONS,
 		...options,
 	};
@@ -43,24 +48,55 @@ export function locator(
 
 	return {
 		name: "vite-react-locator",
-		enforce: "pre",
+
 		apply: "serve",
+
+		enforce: "pre",
 
 		configResolved(resolvedConfig) {
 			config = resolvedConfig;
 		},
 
-		async transform(code, id) {
-
-			if (!(options.enabled ?? true)) return;
+		transform(code, id) {
+			if (!resolvedOptions.enabled) return null;
 
 			return transformReactFile(code, id, config);
+		},
+
+		resolveId(id) {
+			if (id === VIRTUAL_CLIENT_MODULE_ID) {
+				return RESOLVED_VIRTUAL_CLIENT_MODULE_ID;
+			}
+
+			return null;
+		},
+
+		load(id) {
+			if (id === RESOLVED_VIRTUAL_CLIENT_MODULE_ID) {
+				return `import "${RUNTIME_ENTRY_SPECIFIER}";`;
+			}
+
+			return null;
+		},
+
+		transformIndexHtml(): HtmlTagDescriptor[] {
+			if (!resolvedOptions.enabled) return [];
+
+			return [
+				{
+					tag: "script",
+					attrs: {
+						type: "module",
+						src: `/@id/${VIRTUAL_CLIENT_MODULE_ID}`,
+					},
+					injectTo: "body",
+				},
+			];
 		},
 
 		configureServer(server) {
 			installServer(server, resolvedOptions);
 		},
-
 	};
 }
 
